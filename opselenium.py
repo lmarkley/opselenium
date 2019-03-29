@@ -1,20 +1,10 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import datetime
+import secure
 
 todayDate = datetime.datetime.now().strftime("%m/%d/%y");
-siteID = [
-'S********',
-'S********',
-'S********',
-'S********',
-'S********',
-'S********',
-'S********',
-'S********',
-'S********',
-'S********'
-]
+siteID = secure.SID_LIST
 
 # set browser option to run 'headless'
 options = webdriver.ChromeOptions()
@@ -24,19 +14,19 @@ options.add_argument('--headless')
 # be in the script directory or on the system path.)
 browser = webdriver.Chrome(options=options)
 
-browser.get('INSERT OPS URL')
+browser.get(secure.OPS_URL)
 old_window_handle = browser.current_window_handle
 
 # log ourselves in!
 user_elem = browser.find_element_by_name('j_username')
 pass_elem = browser.find_element_by_name('j_password')
 
-user_elem.send_keys('INSERT USER' + Keys.TAB)
-pass_elem.send_keys('INSERT PASS' + Keys.RETURN)
+user_elem.send_keys(secure.USER + Keys.TAB)
+pass_elem.send_keys(secure.PASS + Keys.RETURN)
 
 for sindex in siteID:
     
-    browser.execute_script("window.open('INSERT OPS URL')")
+    browser.execute_script("window.open(secure.OPS_URL)")
 
     new_window_handle = [window for window in browser.window_handles if window != old_window_handle][0]
     
