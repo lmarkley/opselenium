@@ -3,10 +3,11 @@ from selenium.webdriver.common.keys import Keys
 import datetime
 import secure
 
-todayDate = datetime.datetime.now().strftime("%m/%d/%y");
+todayDate = datetime.datetime.now().strftime("%m/%d/%y")
 siteID = secure.SID_LIST
 
 # set browser option to run 'headless'
+# comment out to run in GUI mode
 options = webdriver.ChromeOptions()
 options.add_argument('--headless')
 
@@ -42,10 +43,13 @@ for sindex in siteID:
     idSearch_elem = browser.find_element_by_name('idSearch')
     idSearch_elem.send_keys(sindex + Keys.RETURN)
     
+    # Determing communication protocol
     commType_elem = browser.find_element_by_xpath('//*[@id="siteInfo"]/div/div[2]/div[2]/div[2]/div/span[2]').text
 
-    deviceInfo_elem = browser.find_element_by_xpath('//*[@id="siteDetails"]/div[4]/div[6]/div[2]/div[3]/span[2]').text
+    # check whether we're using SSC
     if commType_elem == 'SSC':
+        # variables are last data recvd, last checkin, and last authenticated checkin respectively.
+        deviceInfo_elem = browser.find_element_by_xpath('//*[@id="siteDetails"]/div[4]/div[6]/div[2]/div[3]/span[2]').text
         lastCheckin_elem = browser.find_element_by_id('lastCheckin').text
         lastAuth_elem = browser.find_element_by_class_name('siteData').text
 
