@@ -10,12 +10,13 @@ siteID = secure.SID_LIST
 # comment out to run in GUI mode
 options = webdriver.ChromeOptions()
 options.add_argument('--headless')
+options.add_argument('--log-level=2')
 
 # Specify Chrome as our browser of choice (chromedriver.exe must 
 # be in the script directory or on the system path.)
 browser = webdriver.Chrome(options=options)
 
-browser.get(secure.OPS_URL)
+browser.get('https://operationsportal.shoppertrak.com')
 old_window_handle = browser.current_window_handle
 
 # log ourselves in!
@@ -27,7 +28,7 @@ pass_elem.send_keys(secure.PASS + Keys.RETURN)
 
 for sindex in siteID:
     
-    browser.execute_script("window.open(secure.OPS_URL)")
+    browser.execute_script("window.open('https://operationsportal.shoppertrak.com')")
 
     new_window_handle = [window for window in browser.window_handles if window != old_window_handle][0]
     
@@ -51,26 +52,26 @@ for sindex in siteID:
         # variables are last data recvd, last checkin, and last authenticated checkin respectively.
         deviceInfo_elem = browser.find_element_by_xpath('//*[@id="siteDetails"]/div[4]/div[6]/div[2]/div[3]/span[2]').text
         lastCheckin_elem = browser.find_element_by_id('lastCheckin').text
-        lastAuth_elem = browser.find_element_by_class_name('siteData').text
+        lastAuth_elem = browser.find_element_by_xpath('//*[@id="siteInfo"]/div/div[2]/div[2]/div[3]/div[3]/span[2]').text
 
         if '(yesterday)' in deviceInfo_elem: 
-            print('Site reported data yesterday, may be online. Checking "Last Checkin" time...')
+            print('Site %s reported data yesterday, may be online. Checking "Last Checkin" time...' % sindex)
             
             if todayDate in lastCheckin_elem:
-                    print('Site %s is online, check for data.' % sindex)
+                print('** STATUS **: Site %s is online, check for data.' % sindex)
             else:
-                print('Site %s is not online.' % sindex)
+                print('** STATUS **: Site %s is not online.' % sindex)
             
         else: 
-            print('Site has not reported data recently and may be offline. Checking "Last Checkin" time...')
+            print('Site %s has not reported data recently and may be offline. Checking "Last Checkin" time...' % sindex)
             if commType_elem == 'SSC':
                 if todayDate in lastCheckin_elem:
                     if todayDate in lastAuth_elem:
                         print('The lead device that the site is checking in. Check Orbit for an OOS flag or a connection issue.')
                     else: 
-                        print('The lead device is checking in but has not been authorized.')
+                        print('The lead device is checking in but has not been authorized at site %s.' % sindex)
                 else:
-                    print('Site %s is not online.' % sindex)
+                    print('** STATUS **: Site %s is not online.' % sindex)
             else:
                 print('Communication type does not support "Checkin" time checks. Check if site %s is online manually.' % sindex)
     else:
