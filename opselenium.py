@@ -6,6 +6,9 @@ import sys
 import datetime
 import secure
 
+# initialize colorama adaptive CLI coloring
+init()
+
 todayDate = datetime.datetime.now().strftime("%m/%d/%y")
 siteID = secure.SID_LIST
 
