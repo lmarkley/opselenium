@@ -1,5 +1,8 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+from colors import *
+from colorama import init
+import sys
 import datetime
 import secure
 
@@ -58,24 +61,42 @@ for sindex in siteID:
             print('Site %s reported data yesterday, may be online. Checking "Last Checkin" time...' % sindex)
             
             if todayDate in lastCheckin_elem:
+                sys.stdout.write(GREEN)
                 print('** STATUS **: Site %s is online, check for data.' % sindex)
+                sys.stdout.write(RESET)
             else:
+                sys.stdout.write(RED)
                 print('** STATUS **: Site %s is not online.' % sindex)
+                sys.stdout.write(RESET)
             
         else: 
             print('Site %s has not reported data recently and may be offline. Checking "Last Checkin" time...' % sindex)
             if commType_elem == 'SSC':
                 if todayDate in lastCheckin_elem:
                     if todayDate in lastAuth_elem:
-                        print('The lead device that the site is checking in. Check Orbit for an OOS flag or a connection issue.')
+                        sys.stdout.write(BOLD + REVERSE)
+                        print('** STATUS **:')
+                        sys.stdout.write(RESET)
+                        sys.stdout.write(GREEN)
+                        print('Lead device is online.')
+                        sys.stdout.write(BOLD + RED)
+                        print('No data is reporting.')
+                        sys.stdout.write(RESET)
+                        print('Check for an OOS flag or HW issue with the Orbit.')
                     else: 
                         print('The lead device is checking in but has not been authorized at site %s.' % sindex)
                 else:
+                    sys.stdout.write(RED)
                     print('** STATUS **: Site %s is not online.' % sindex)
+                    sys.stdout.write(RESET)
             else:
+                sys.stdout.write(YELLOW)
                 print('Communication type does not support "Checkin" time checks. Check if site %s is online manually.' % sindex)
+                sys.stdout.write(RESET)
     else:
+        sys.stdout.write(YELLOW)
         print('Communication type does not support "Checkin" time checks. Check if site %s is online manually.' % sindex)
+        sys.stdout.write(RESET)
 
     if browser.current_window_handle == old_window_handle:    
         browser.close()
