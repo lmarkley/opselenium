@@ -26,8 +26,7 @@ elif len(sys.argv) > 0: # if there are > 1 arguments....
     # if the argument is a txt or csv file...
         with open(sys.argv[1], 'r') as sid_list:
             for count, line in enumerate(sid_list):
-                sid_list_input.appeand(line.rstrip('\n'))
-                # print(sid_list_input[count])
+                sid_list_input.append(line.rstrip('\n')
             sid_list.close()
         siteID = sid_list_input    
     else:
@@ -39,10 +38,10 @@ else:
 # ensure all input site IDs are valid
 idx = 0
 for id in siteID:
-    idx += 1
     if not sid_pattern.match(str(sys.argv[1])): 
         print("%s is not a valid Site ID, deleting it from input." % id)
         siteID.pop(idx)
+    idx += 1                                  
 
 if len(siteID) == 0:
     print("No Site IDs given as input. Provide input (STDIN | .txt | .csv) and try again.")
