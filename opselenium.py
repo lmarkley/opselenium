@@ -6,37 +6,52 @@ from colors import *
 from colorama import init
 import sys
 import datetime
-import secure   
+import secure
+import re
 
 # initialize colorama adaptive CLI coloring
 init()
 
 todayDate = datetime.datetime.now().strftime("%m/%d/%y")
+
+# figure out what kind and how much input we're dealing with
 sid_list_input = []
 siteID = []
-
-if hasattr(secure, 'SID_LIST'):
+sid_pattern = re.compile("(S[0-9]{8}|8[0-9]{7}|[0-1]00[0-9]{5}|[0-9]{5})")
+if hasattr(secure, 'SID_LIST'): # if the SID_LIST constant is set...        
     siteID = secure.SID_LIST
-elif len(sys.argv) > 0:
-    # print(sys.argv[0])
+elif len(sys.argv) > 0: # if there are > 1 arguments....
     if ".txt" in str(sys.argv[1]) or ".csv" in str(sys.argv[1]):
+    # if the argument is a txt or csv file...
         with open(sys.argv[1], 'r') as sid_list:
             for count, line in enumerate(sid_list):
                 sid_list_input.appeand(line.rstrip('\n'))
                 # print(sid_list_input[count])
             sid_list.close()
-        siteID = sid_list_input
+        siteID = sid_list_input    
     else:
         siteID = [str(sys.argv[1])]
 else:
+    print("No Site IDs given as input. Provide input (STDIN | .txt | .csv) and try again.")
+    sys.exit()
+    
+# ensure all input site IDs are valid
+for id in siteID:
+    idx += 1
+    if not sid_pattern.match(str(sys.argv[1])): 
+        print("%s is not a valid Site ID, deleting it from input." % id)
+        siteID.pop(idx)
+
+if len(siteID) == 0:
     print("No Site IDs given as input. Provide input (STDIN | .txt | .csv) and try again.")
     sys.exit()
 
 # set browser option to run 'headless'
 # comment out to run in GUI mode
 options = webdriver.ChromeOptions()
-# options.add_argument('--headless')
+options.add_argument('--headless')
 options.add_argument('--log-level=2')
+options.add_argument('--no-cache')
 
 # Specify Chrome as our browser of choice (chromedriver.exe must 
 # be in the script directory or on the system path.)
@@ -113,11 +128,11 @@ for sindex in siteID:
                     print('** STATUS **: Site %s is not online.' % sindex)
                     sys.stdout.write(RESET)
             else:
-                sys.stdout.write(YELLOW)
+                sys.stdout.write(CYAN)
                 print('Communication type does not support "Checkin" time checks. Check if site %s is online manually.' % sindex)
                 sys.stdout.write(RESET)
     else:
-        sys.stdout.write(YELLOW)
+        sys.stdout.write(CYAN)
         print('Communication type does not support "Checkin" time checks. Check if site %s is online manually.' % sindex)
         sys.stdout.write(RESET)
 
