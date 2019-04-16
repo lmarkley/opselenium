@@ -17,7 +17,7 @@ todayDate = datetime.datetime.now().strftime("%m/%d/%y")
 # figure out what kind and how much input we're dealing with
 sid_list_input = []
 siteID = []
-sid_pattern = re.compile("(S[0-9]{8}|8[0-9]{7}|[0-1]00[0-9]{5}|[0-9]{5})")
+sid_pattern = re.compile(r"S?[0-9]{3}?[0-9]{5}")
 if hasattr(secure, 'SID_LIST'): # if the SID_LIST constant is set...     
     print("Default Site ID list is set, ignoring all other input.")
     siteID = secure.SID_LIST
@@ -38,7 +38,7 @@ else:
 # ensure all input site IDs are valid
 idx = 0
 for id in siteID:
-    if not sid_pattern.match(str(sys.argv[1])): 
+    if sid_pattern.search(str(sys.argv[1])) != None:  
         print("%s is not a valid Site ID, deleting it from input." % id)
         siteID.pop(idx)
     idx += 1                                  
