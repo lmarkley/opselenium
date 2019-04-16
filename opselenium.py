@@ -36,6 +36,7 @@ else:
     sys.exit()
     
 # ensure all input site IDs are valid
+idx = 0
 for id in siteID:
     idx += 1
     if not sid_pattern.match(str(sys.argv[1])): 
