@@ -22,7 +22,7 @@ elif len(sys.argv) > 0:
     if ".txt" in str(sys.argv[1]) or ".csv" in str(sys.argv[1]):
         with open(sys.argv[1], 'r') as sid_list:
             for count, line in enumerate(sid_list):
-                sid_list_input[count] = line.rstrip(',')
+                sid_list_input.appeand(line.rstrip('\n'))
                 # print(sid_list_input[count])
             sid_list.close()
         siteID = sid_list_input
