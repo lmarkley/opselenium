@@ -1,21 +1,41 @@
+#!python.exe
+
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from colors import *
 from colorama import init
 import sys
 import datetime
-import secure
+import secure   
 
 # initialize colorama adaptive CLI coloring
 init()
 
 todayDate = datetime.datetime.now().strftime("%m/%d/%y")
-siteID = secure.SID_LIST
+sid_list_input = []
+siteID = []
+
+if hasattr(secure, 'SID_LIST'):
+    siteID = secure.SID_LIST
+elif len(sys.argv) > 0:
+    # print(sys.argv[0])
+    if ".txt" in str(sys.argv[1]) or ".csv" in str(sys.argv[1]):
+        with open(sys.argv[1], 'r') as sid_list:
+            for count, line in enumerate(sid_list):
+                sid_list_input[count] = line.rstrip(',')
+                # print(sid_list_input[count])
+            sid_list.close()
+        siteID = sid_list_input
+    else:
+        siteID = [str(sys.argv[1])]
+else:
+    print("No Site IDs given as input. Provide input (STDIN | .txt | .csv) and try again.")
+    sys.exit()
 
 # set browser option to run 'headless'
 # comment out to run in GUI mode
 options = webdriver.ChromeOptions()
-options.add_argument('--headless')
+# options.add_argument('--headless')
 options.add_argument('--log-level=2')
 
 # Specify Chrome as our browser of choice (chromedriver.exe must 
@@ -47,7 +67,7 @@ for sindex in siteID:
     
     # next page
     
-    idSearch_elem = browser.find_element_by_name('idSearch')
+    idSearch_elem = browser.find_element_by_name("idSearch")
     idSearch_elem.send_keys(sindex + Keys.RETURN)
     
     # Determing communication protocol
@@ -112,3 +132,4 @@ for sindex in siteID:
         old_window_handle = new_window_handle
 
 browser.quit()
+sys.exit()
