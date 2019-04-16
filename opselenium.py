@@ -18,7 +18,8 @@ todayDate = datetime.datetime.now().strftime("%m/%d/%y")
 sid_list_input = []
 siteID = []
 sid_pattern = re.compile("(S[0-9]{8}|8[0-9]{7}|[0-1]00[0-9]{5}|[0-9]{5})")
-if hasattr(secure, 'SID_LIST'): # if the SID_LIST constant is set...        
+if hasattr(secure, 'SID_LIST'): # if the SID_LIST constant is set...     
+    print("Default Site ID list is set, ignoring all other input.")
     siteID = secure.SID_LIST
 elif len(sys.argv) > 0: # if there are > 1 arguments....
     if ".txt" in str(sys.argv[1]) or ".csv" in str(sys.argv[1]):
