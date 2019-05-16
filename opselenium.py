@@ -33,6 +33,7 @@ siteID = []
 status = []
 notes = []
 list_index = 0
+reportFile = None
 
 if hasattr(secure, 'SID_LIST'): # if the SID_LIST constant is set...     
 	print("Default Site ID list is set, ignoring all other input.")
@@ -172,7 +173,7 @@ for sindex in siteID:
 
 	# write our info to file
 	reportFile.write( status[list_index] + ', ' + siteID[list_index] + ', ' + notes[list_index] + '\n')
-
+	list_index += 1
 
 	if browser.current_window_handle == old_window_handle:    
 		browser.close()
