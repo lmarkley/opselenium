@@ -6,3 +6,4 @@
 ## Roadmap
 - [ ] Count counters
 - [ ] Counter-level online/offline granularity
+- [ ] Multi-threading asynchronous execution
