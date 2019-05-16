@@ -1,7 +1,6 @@
-#!python.exe
-
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+from selenium.common.exceptions import NoSuchElementException
 from colors import *
 from colorama import init
 import sys
@@ -33,11 +32,13 @@ sid_list_input = []
 siteID = []
 status = []
 notes = []
+list_index = 0
 
 if hasattr(secure, 'SID_LIST'): # if the SID_LIST constant is set...     
 	print("Default Site ID list is set, ignoring all other input.")
 	siteID = secure.SID_LIST
 elif len(sys.argv) > 0: # if there are > 1 arguments....
+	output_file = str(sys.argv[2])
 	if ".txt" in str(sys.argv[1]) or ".csv" in str(sys.argv[1]):
 	# if the argument is a txt or csv file...
 		with open(sys.argv[1], 'r') as sid_list:
@@ -46,6 +47,7 @@ elif len(sys.argv) > 0: # if there are > 1 arguments....
 		siteID = sid_list_input
 	else:
 		siteID = [str(sys.argv[1])]
+
 else:
 	print("No Site IDs given as input. Provide input (STDIN | .txt | .csv) and try again.")
 	sys.exit()
@@ -80,18 +82,30 @@ for sindex in siteID:
 		browser.switch_to.window(old_window_handle)
 	else:
 		browser.switch_to.window(new_window_handle)
-
-	# next page
-	idSearch_elem = browser.find_element_by_name("idSearch")
+   
+	idSearch_elem = browser.find_element_by_id('idSearch')
 	idSearch_elem.send_keys(sindex + Keys.RETURN)
 	
 	# Determing communication protocol
-	commType_elem = browser.find_element_by_xpath('//*[@id="siteInfo"]/div/div[2]/div[2]/div[2]/div/span[2]').text
+	try:
+		commType_elem = browser.find_element_by_xpath('//*[@id="siteInfo"]/div/div[2]/div[2]/div[2]/div/span[2]').text
+	except NoSuchElementException:
+		continue
 
 	# check whether we're using SSC
 	if commType_elem == 'SSC':
 		# variables are last data recvd, last checkin, and last authenticated checkin respectively.
-		deviceInfo_elem = browser.find_element_by_xpath('//*[@id="siteDetails"]/div[4]/div[6]/div[2]/div[3]/span[2]').text
+
+		deviceType_elem = browser.find_element_by_class_name('fullDeviceTypeTitle').text
+
+		if ('Orbit ES' in deviceType_elem ):
+			deviceInfo_elem = browser.find_element_by_xpath('//*[@id="siteDetails"]/div[4]/div[5]/div[2]/div[3]/span[2]').text
+		else:
+			try:
+				deviceInfo_elem = browser.find_element_by_class_name('deviceInfoData').text
+			except NoSuchElementException:
+				deviceInfo_elem = browser.find_element_by_xpath('//*[@id="siteDetails"]/div[4]/div[6]/div[2]/div[3]/span[2]').text
+			
 		lastCheckin_elem = browser.find_element_by_id('lastCheckin').text
 		lastAuth_elem = browser.find_element_by_xpath('//*[@id="siteInfo"]/div/div[2]/div[2]/div[3]/div[3]/span[2]').text
 
@@ -152,7 +166,13 @@ for sindex in siteID:
 		print('Communication type does not support "Checkin" time checks. Check if site %s is online manually.' % sindex)
 		sys.stdout.write(RESET)
 		status.append(noSupportStatus)
-		notes.append(noSupportNotes)
+		notes.append(noSupportNotes) 
+
+	# write our info to file
+	with open(output_file, 'w') as reportFile:
+		reportFile.write('Status,Site ID,Notes' + '\n')
+		reportFile.write( status[list_index] + ', ' + siteID[list_index] + ', ' + notes[list_index] + '\n')
+
 
 	if browser.current_window_handle == old_window_handle:    
 		browser.close()
@@ -165,11 +185,5 @@ for sindex in siteID:
 		old_window_handle = new_window_handle
 
 browser.quit()
-
-# write result to a file
-with open('status_data.csv', 'w') as reportFile:
-	reportFile.write('Site ID, Status, Notes' + '\n')
-	for i in range(0,len(siteID)):
-		reportFile.write(siteID[i] + ', ' + status[i] + ', ' + notes[i] + '\n')
 
 sys.exit()
