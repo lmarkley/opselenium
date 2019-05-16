@@ -39,6 +39,7 @@ if hasattr(secure, 'SID_LIST'): # if the SID_LIST constant is set...
 	siteID = secure.SID_LIST
 elif len(sys.argv) > 0: # if there are > 1 arguments....
 	output_file = str(sys.argv[2])
+	reportFile = open(output_file, 'w')
 	if ".txt" in str(sys.argv[1]) or ".csv" in str(sys.argv[1]):
 	# if the argument is a txt or csv file...
 		with open(sys.argv[1], 'r') as sid_list:
@@ -169,9 +170,8 @@ for sindex in siteID:
 		notes.append(noSupportNotes) 
 
 	# write our info to file
-	with open(output_file, 'w') as reportFile:
-		reportFile.write('Status,Site ID,Notes' + '\n')
-		reportFile.write( status[list_index] + ', ' + siteID[list_index] + ', ' + notes[list_index] + '\n')
+	reportFile.write('Status,Site ID,Notes' + '\n')
+	reportFile.write( status[list_index] + ', ' + siteID[list_index] + ', ' + notes[list_index] + '\n')
 
 
 	if browser.current_window_handle == old_window_handle:    
