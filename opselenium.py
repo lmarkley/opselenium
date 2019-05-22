@@ -29,6 +29,9 @@ noSupportNotes    = 'Communication type is unsupported check manually.'
 
 # figure out what kind and how much input we're dealing with
 sid_list_input = []
+tid_list_input = []
+owner_list_input = []
+nsd_list_input = []
 siteID = []
 status = []
 notes = []
@@ -41,12 +44,16 @@ if hasattr(secure, 'SID_LIST'): # if the SID_LIST constant is set...
 elif len(sys.argv) > 0: # if there are > 1 arguments....
 	output_file = str(sys.argv[2])
 	reportFile = open(output_file, 'a+')
-	reportFile.write('Status,Site ID,Notes' + '\n')
+	reportFile.write('Status,Site ID,TaskID,Owner,NSD,Notes' + '\n')
 	if ".txt" in str(sys.argv[1]) or ".csv" in str(sys.argv[1]):
 	# if the argument is a txt or csv file...
 		with open(sys.argv[1], 'r') as sid_list:
 			for count, line in enumerate(sid_list):
-				sid_list_input.append(line.rstrip('\n'))
+				input_data = line.split(',')
+				sid_list_input.append(input_data[0])
+				tid_list_input.append(input_data[1])
+				owner_list_input.append(input_data[2])
+				nsd_list_input.append(input_data[3].rstrip('\n'))
 		siteID = sid_list_input
 	else:
 		siteID = [str(sys.argv[1])]
@@ -172,7 +179,7 @@ for sindex in siteID:
 		notes.append(noSupportNotes) 
 
 	# write our info to file
-	reportFile.write( status[list_index] + ', ' + siteID[list_index] + ', ' + notes[list_index] + '\n')
+	reportFile.write(status[list_index] + ', ' + siteID[list_index] + ', ' + tid_list_input[list_index] + ', ' + owner_list_input[list_index] + ', ' + nsd_list_input[list_index] + ', ' + notes[list_index] + '\n')
 	list_index += 1
 
 	if browser.current_window_handle == old_window_handle:    
