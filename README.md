@@ -5,7 +5,7 @@
 
 1. An experiment. 
 2. A thing I needed that didn't exist
-3. A *non-invasive* [^noninvasive], non-nausea-inducing, and **way-faster** way of doing something. 
+3. A *non-invasive*<sup>[1](#notmad)</sup>, non-nausea-inducing, and **way-faster** way of doing something. 
 
 ### Why is it?
 
@@ -17,4 +17,4 @@ As I state in point #2 above: I wanted it, nobody had it, so I made it for mysel
 - Selenium 3.141.0
 - Latest Chrome WebDriver
 
-[^noninvasive]: I began with the assumption that if you alter any part of the "stack", you make all of the people mad. I've decided I'd rather not do that. 
+<a name="notmad">1</a>: I began with the assumption that if you alter any part of the "stack", you make all of the people mad. I've decided I'd rather not do that.
