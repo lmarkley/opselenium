@@ -6,5 +6,7 @@
 ## Roadmap
 - [ ] Count counters.
 - [ ] Counter-level online/offline granularity.
-- [ ] Multi-threading asynchronous execution. (WIP)
+- [ ] Multi-threading asynchronous execution. (WIP)<sup>[1](#f1)</sup>
 - [x] Add task/owner info to output.
+
+<a name="f1">1</a> : see the file `opselenium_mp.py` for the first tries at an implementation.
