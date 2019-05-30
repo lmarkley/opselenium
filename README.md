@@ -17,4 +17,4 @@ As I state in point #2 above: I wanted it, nobody had it, so I made it for mysel
 - Selenium 3.141.0
 - Latest Chrome WebDriver
 
-<a name="notmad">1</a>: I began with the assumption that if you alter any part of the "stack", you make all of the people mad. I've decided I'd rather not do that.
+<a name="notmad">1 </a>: I began with the assumption that if you alter any part of the "stack", you make all of the people mad. I've decided I'd rather not do that.
