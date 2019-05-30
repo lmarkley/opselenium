@@ -7,6 +7,7 @@ import sys
 import datetime
 import secure
 import os
+import io
 
 # initialize colorama adaptive CLI coloring
 init()
@@ -43,11 +44,11 @@ if hasattr(secure, 'SID_LIST'): # if the SID_LIST constant is set...
 	siteID = secure.SID_LIST
 elif len(sys.argv) > 0: # if there are > 1 arguments....
 	output_file = str(sys.argv[2])
-	reportFile = open(output_file, 'a+')
+	reportFile = io.open(output_file,'a+', encoding='utf-8')
 	reportFile.write('Status,Site ID,TaskID,Owner,NSD,Notes' + '\n')
 	if ".txt" in str(sys.argv[1]) or ".csv" in str(sys.argv[1]):
 	# if the argument is a txt or csv file...
-		with open(sys.argv[1], 'r') as sid_list:
+		with io.open(sys.argv[1], 'r', encoding='utf-8') as sid_list:
 			for count, line in enumerate(sid_list):
 				input_data = line.split(',')
 				sid_list_input.append(input_data[0])
