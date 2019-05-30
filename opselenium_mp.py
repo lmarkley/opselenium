@@ -194,10 +194,7 @@ class Counter(object):
             self.lock.release()
 
 if __name__ == "__main__":
-	print("let's do this\n")
 	build_urls()
-	# for url in sid_urls:
-	# 	print(url)
 	browser = None
 	browser = get_wd()
 	browser = authenticate_site( browser )
