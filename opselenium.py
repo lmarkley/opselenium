@@ -8,6 +8,11 @@ import datetime
 import secure
 import os
 import io
+import logging
+
+# logging configuration
+logName = str(datetime.datetime.now().strftime("%d%m%y%s") + '.log')
+logging.basicConfig(filename=logName, filemode='w', format='%(message)s', level=logging.DEBUG)
 
 # initialize colorama adaptive CLI coloring
 init()
@@ -51,7 +56,7 @@ elif len(sys.argv) > 0: # if there are > 1 arguments....
 		with io.open(sys.argv[1], 'r', encoding='utf-8') as sid_list:
 			for count, line in enumerate(sid_list):
 				input_data = line.split(',')
-				sid_list_input.append(input_data[0])
+				sid_list_input.append(input_data[0].rstrip('\ue006'))
 				tid_list_input.append(input_data[1])
 				owner_list_input.append(input_data[2])
 				nsd_list_input.append(input_data[3].rstrip('\n'))
@@ -67,7 +72,7 @@ else:
 # comment out to run in GUI mode
 options = webdriver.ChromeOptions()
 options.add_argument('--headless')
-options.add_argument('--log-level=2')
+options.add_argument('--log-level=1')
 options.add_argument('--no-cache')
 
 # Specify Chrome as our browser of choice (chromedriver.exe must 
@@ -93,10 +98,21 @@ for sindex in siteID:
 		browser.switch_to.window(old_window_handle)
 	else:
 		browser.switch_to.window(new_window_handle)
-   
-	idSearch_elem = browser.find_element_by_id('idSearch')
-	idSearch_elem.send_keys(sindex + Keys.RETURN)
-	
+	try:
+		isInvalid = browser.find_element_by_xpath('/html/body/h1')
+		if ('Invalid' in isInvalid):
+			logging.debug('Site is not yet in Ops Portal.')
+			continue
+	except NoSuchElementException:
+		logging.debug('Site exists, moving on.')
+
+	try:
+		idSearch_elem = browser.find_element_by_id('idSearch')
+		idSearch_elem.send_keys(sindex + Keys.RETURN)
+	except NoSuchElementException:
+		logging.error('No search element!')
+		continue
+
 	# Determing communication protocol
 	try:
 		commType_elem = browser.find_element_by_xpath('//*[@id="siteInfo"]/div/div[2]/div[2]/div[2]/div/span[2]').text
