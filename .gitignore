@@ -4,4 +4,4 @@
 __pycache__/*.pyc
 *.log
 chromedriver*
-.DS_Store
+*.DS_Store
