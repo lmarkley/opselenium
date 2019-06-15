@@ -3,4 +3,5 @@
 *.exe
 __pycache__/*.pyc
 *.log
-*chromedriver*
+chromedriver*
+.DS_Store
