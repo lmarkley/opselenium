@@ -8,11 +8,18 @@ import datetime
 import secure
 import os
 import io
-import logging
 
-# logging configuration
-logName = str(datetime.datetime.now().strftime("%d%m%y%s") + '.log')
-logging.basicConfig(filename=logName, filemode='w', format='%(message)s', level=logging.DEBUG)
+def write_to_output(idx):
+	reportFile.write(status[idx] + ', ' + siteID[idx] + ', ' + tid_list_input[idx] + ', ' + owner_list_input[idx] + ', ' + nsd_list_input[idx] + ', ' + notes[idx] + '\n')
+	idx += 1
+
+def xpath_exists(driver, xpath):
+	try: # try to find the text in page source
+		driver.find_element_by_xpath(xpath)
+	except NoSuchElementException:
+		print("no element")
+		return False
+	return True
 
 # initialize colorama adaptive CLI coloring
 init()
@@ -25,6 +32,7 @@ siteOfflineStatus = 'OFFLINE'
 leadOnlineStatus  = 'LEAD ONLINE'
 notAuthedStatus   = 'NOT AUTHED'
 noSupportStatus   = 'UNSUPPORTED TYPE'
+importStatus	  = 'IMPORT/ACTIVATE'
 
 # notes
 siteOnlineNotes   = 'Check for data'
@@ -32,6 +40,7 @@ siteOfflineNotes  = 'Begin troubleshooting as normal'
 leadOnlineNotes   = 'Check for Orbit OOS/HW/Connection fault'
 notAuthedNotes    = 'ST600 needs to be authorized'
 noSupportNotes    = 'Communication type is unsupported check manually.'
+importNotes 	  = 'Site is closed; is not imported; or is deactivated.'
 
 # figure out what kind and how much input we're dealing with
 sid_list_input = []
@@ -89,28 +98,23 @@ user_elem.send_keys(secure.USER + Keys.TAB)
 pass_elem.send_keys(secure.PASS + Keys.RETURN)
 
 for sindex in siteID:
-	
 	browser.execute_script("window.open('https://operationsportal.shoppertrak.com')")
-	
+
 	new_window_handle = [window for window in browser.window_handles if window != old_window_handle][0]
 	
 	if browser.current_window_handle != old_window_handle:
 		browser.switch_to.window(old_window_handle)
 	else:
 		browser.switch_to.window(new_window_handle)
-	try:
-		isInvalid = browser.find_element_by_xpath('/html/body/h1')
-		if ('Invalid' in isInvalid):
-			logging.debug('Site is not yet in Ops Portal.')
-			continue
-	except NoSuchElementException:
-		logging.debug('Site exists, moving on.')
 
-	try:
-		idSearch_elem = browser.find_element_by_id('idSearch')
-		idSearch_elem.send_keys(sindex + Keys.RETURN)
-	except NoSuchElementException:
-		logging.error('No search element!')
+	idSearch_elem = browser.find_element_by_id('idSearch')
+	idSearch_elem.send_keys(sindex + Keys.RETURN)
+
+	if ( xpath_exists(browser,'/html/body/h1') ):
+		print('Site is not in Ops Portal')
+		status.append(importStatus)
+		notes.append(importNotes)
+		write_to_output(list_index)
 		continue
 
 	# Determing communication protocol
@@ -201,9 +205,7 @@ for sindex in siteID:
 		status.append(noSupportStatus)
 		notes.append(noSupportNotes) 
 
-	# write our info to file
-	reportFile.write(status[list_index] + ', ' + siteID[list_index] + ', ' + tid_list_input[list_index] + ', ' + owner_list_input[list_index] + ', ' + nsd_list_input[list_index] + ', ' + notes[list_index] + '\n')
-	list_index += 1
+	write_to_output(list_index)
 
 	if browser.current_window_handle == old_window_handle:    
 		browser.close()
