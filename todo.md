@@ -8,5 +8,5 @@
 ## Roadmap
 - [ ] Counter-level online/offline granularity.
 - [x] Add task/owner info to output.
-~~- [ ] Count counter.~~
-~~- [ ] Multi-threading asynchronous execution. (WIP)~~ *moved to separate branch*
+~~- [ ] Multi-threading asynchronous execution. (WIP)~~
+*moved to separate branch*
