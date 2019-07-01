@@ -11,7 +11,6 @@ import io
 
 def write_to_output(idx):
 	reportFile.write(status[idx] + ', ' + siteID[idx] + ', ' + tid_list_input[idx] + ', ' + owner_list_input[idx] + ', ' + nsd_list_input[idx] + ', ' + notes[idx] + '\n')
-	idx += 1
 
 def xpath_exists(driver, xpath):
 	try: # try to find the text in page source
@@ -206,6 +205,7 @@ for sindex in siteID:
 		notes.append(noSupportNotes) 
 
 	write_to_output(list_index)
+	list_index += 1
 
 	if browser.current_window_handle == old_window_handle:    
 		browser.close()
