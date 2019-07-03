@@ -1,5 +1,6 @@
 ## High-priority Tasks
 - [ ] Automatic output file naming
+- [ ] Add drag-and-drop to script
 - [ ] **Graceful and useful** handling of errors due to sites not being setup properly.
 - [x] Modify frequency of file writes. 
 - [x] Add handling for processing "invalid" html pages. (WIP)
