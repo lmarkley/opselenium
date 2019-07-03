@@ -13,10 +13,9 @@ def write_to_output(idx):
 	reportFile.write(status[idx] + ', ' + siteID[idx] + ', ' + tid_list_input[idx] + ', ' + owner_list_input[idx] + ', ' + nsd_list_input[idx] + ', ' + notes[idx] + '\n')
 
 def xpath_exists(driver, xpath):
-	try: # try to find the text in page source
+	try:
 		driver.find_element_by_xpath(xpath)
 	except NoSuchElementException:
-		print("no element")
 		return False
 	return True
 
@@ -56,7 +55,7 @@ if hasattr(secure, 'SID_LIST'): # if the SID_LIST constant is set...
 	print("Default Site ID list is set, ignoring all other input.")
 	siteID = secure.SID_LIST
 elif len(sys.argv) > 0: # if there are > 1 arguments....
-	output_file = str(sys.argv[2])
+	output_file = str(sys.argv[1]).split('.')[0] + '_infoOut.csv'
 	reportFile = io.open(output_file,'a+', encoding='utf-8')
 	reportFile.write('Status,Site ID,TaskID,Owner,NSD,Notes' + '\n')
 	if ".txt" in str(sys.argv[1]) or ".csv" in str(sys.argv[1]):
