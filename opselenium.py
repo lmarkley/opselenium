@@ -8,6 +8,23 @@ import datetime
 import secure
 import os
 import io
+import xlrd
+import csv
+
+# convert from xlsx to csv, does what it says on the tin
+def convert_to_csv(xlsx_file):
+	book = xlrd.open_workbook(xlsx_file)
+	filename = xlsx_file.split('.xlsx')[0].lstrip('../')
+	sheet = book.sheet_by_name(filename)
+	csv_name = 'temp.csv' # we will just overwrite a temp file each time
+	output_csv = open(csv_name, 'w+')
+	writer = csv.writer(output_csv, quoting=csv.QUOTE_ALL)
+	for r in range(sheet.nrows):
+		writer.writerow(sheet.row_values(r))
+	
+	output_csv.close();
+	return 'temp.csv'
+
 
 def write_to_output(idx):
 	reportFile.write(status[idx] + ', ' + siteID[idx] + ', ' + tid_list_input[idx] + ', ' + owner_list_input[idx] + ', ' + nsd_list_input[idx] + ', ' + notes[idx] + '\n')
@@ -50,26 +67,31 @@ status = []
 notes = []
 list_index = 0
 reportFile = None
+inputFile = None
 
 if hasattr(secure, 'SID_LIST'): # if the SID_LIST constant is set...     
 	print("Default Site ID list is set, ignoring all other input.")
 	siteID = secure.SID_LIST
 elif len(sys.argv) > 0: # if there are > 1 arguments....
+	inputFile = str(sys.argv[1])
 	output_file = str(sys.argv[1]).split('.')[0] + '_infoOut.csv'
 	reportFile = io.open(output_file,'a+', encoding='utf-8')
 	reportFile.write('Status,Site ID,TaskID,Owner,NSD,Notes' + '\n')
-	if ".txt" in str(sys.argv[1]) or ".csv" in str(sys.argv[1]):
+	if ".txt" in inputFile or ".csv" in inputFile or ".xlsx" in inputFile:
+	# if the arg is xlsx, convert
+		if ".xlsx" in inputFile:
+			inputFile = convert_to_csv(str(sys.argv[1]))
 	# if the argument is a txt or csv file...
-		with io.open(sys.argv[1], 'r', encoding='utf-8') as sid_list:
+		with io.open(inputFile, 'r', encoding='utf-8') as sid_list:
 			for count, line in enumerate(sid_list):
 				input_data = line.split(',')
-				sid_list_input.append(input_data[0].rstrip('\ue006'))
+				sid_list_input.append(input_data[0].rstrip('\ue006').strip('"'))
 				tid_list_input.append(input_data[1])
 				owner_list_input.append(input_data[2])
 				nsd_list_input.append(input_data[3].rstrip('\n'))
 		siteID = sid_list_input
 	else:
-		siteID = [str(sys.argv[1])]
+		siteID = [inputFile]
 
 else:
 	print("No Site IDs given as input. Provide input (STDIN | .txt | .csv) and try again.")
