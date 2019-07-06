@@ -24,11 +24,11 @@ def convert_to_csv(xlsx_file):
 	
 	output_csv.close();
 	return 'temp.csv'
-
-
+# write to output file in preferred format
 def write_to_output(idx):
 	reportFile.write(status[idx] + ', ' + siteID[idx] + ', ' + tid_list_input[idx] + ', ' + owner_list_input[idx] + ', ' + nsd_list_input[idx] + ', ' + notes[idx] + '\n')
 
+# check if an element of a page exists and deal with that
 def xpath_exists(driver, xpath):
 	try:
 		driver.find_element_by_xpath(xpath)
@@ -78,7 +78,7 @@ elif len(sys.argv) > 0: # if there are > 1 arguments....
 	reportFile = io.open(output_file,'a+', encoding='utf-8')
 	reportFile.write('Status,Site ID,TaskID,Owner,NSD,Notes' + '\n')
 	if ".txt" in inputFile or ".csv" in inputFile or ".xlsx" in inputFile:
-	# if the arg is xlsx, convert
+	# if the arg is xlsx, then convert
 		if ".xlsx" in inputFile:
 			inputFile = convert_to_csv(str(sys.argv[1]))
 	# if the argument is a txt or csv file...
@@ -225,7 +225,7 @@ for sindex in siteID:
 		status.append(noSupportStatus)
 		notes.append(noSupportNotes) 
 
-	write_to_output(list_index)
+	write_to_output(list_index) # use `write_to_output`function after each iteration
 	list_index += 1
 
 	if browser.current_window_handle == old_window_handle:    
@@ -238,6 +238,9 @@ for sindex in siteID:
 		browser.switch_to.window(new_window_handle)
 		old_window_handle = new_window_handle
 
+if ( reportFile not None ):
+	reportFile.close()
+		
 browser.quit()
 
 sys.exit()
