@@ -1,5 +1,6 @@
 *secure.py*
 *.csv
+*.xlsx
 *.exe
 __pycache__/*.pyc
 *.log
