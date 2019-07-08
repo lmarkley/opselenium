@@ -12,9 +12,9 @@ import xlrd
 import csv
 
 # convert from xlsx to csv, does what it says on the tin
-def convert_to_csv(xlsx_file):
-	book = xlrd.open_workbook(xlsx_file)
-	filename = xlsx_file.split('.xlsx')[0].lstrip('../')
+def convert_to_csv(xls_file):
+	book = xlrd.open_workbook(xls_file)
+	filename = xls_file.split('.xls')[0].lstrip('../')
 	sheet = book.sheet_by_name(filename)
 	csv_name = 'temp.csv' # we will just overwrite a temp file each time
 	output_csv = open(csv_name, 'w+')
